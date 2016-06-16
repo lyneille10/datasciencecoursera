@@ -1,0 +1,50 @@
+## Coursera R Programming Assignment 2
+## Write an R function to cache time-consuming computations
+## Use scoping rules, manipulate to preserve state inside of an R object
+##
+## makeCacheMatrix creates a list containing a function to
+## set the value of the matrix
+## get the value of the matrix
+## set the value of the inverse of the matrix
+## get the value of the inverse of the matrix
+makeCacheMatrix <- function(x = matrix()) {
+        inv <- NULL
+        set <- function(y) {
+                x <<- y
+                inv <<- NULL
+        }
+        get <- function() x
+        setinverse <- function(inverse) inv <<- inverse
+        getinverse <- function() inv
+        list(set = set, get = get,
+             setinverse = setinverse,
+             getinverse = getinverse)
+}
+## cacheSolve creates a function to return the inverse of the matrix by
+## checking if the inverse has already been computed, if so then skips
+## computing the inverse then sets the value in the cache
+cacheSolve <- function(x, ...) {
+        inv <- x$getinverse()
+        if(!is.null(inv)) {
+                message("getting cached data")
+                return(inv)
+        }
+        data <- x$get()
+        inv <- solve(data)
+        x$setinverse(inv)
+        inv
+}
+## Sample run to build a matrix
+x = rbind(c(1,2), c(3,4))
+m = makeCacheMatrix(x)
+m$get()
+## Return restults, 2x2 matrix
+## 1  2
+## 3  4
+##
+## Cache the data to solve for inverse
+cacheSolve(m)
+## Return results, 2x2 matrix
+## -2     1
+## 1.5  -0.5
+## Which is the inverse of the original!! WhooHoo!
